@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Skillify</string>
+    <string name="title_activity_messages">MessagesActivity</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_auth_screen">AuthScreen</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
+    <string name="title_activity_register_screen">RegisterScreen</string>
+    <string name="skillify_pro_str">Skillify PRO</string>
+    <string name="configure_your_account_str">Configure your account</string>
+    <string name="only_for_pro_users_str">(Only for PRO users)</string>
+    <string name="status_online_str">Status online</string>
+    <string name="view_profile_str">View Profile</string>
+    <string name="self_skills_str">My skills</string>
+    <string name="learning_skills_str">Learning skills</string>
+    <string name="about_us_str">About us</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_self_skills">SelfSkillsActivity</string>
+    <string name="high_level_skill_text">You\'re almost done with this skill</string>
+    <string name="title_activity_learning_skills">LearningSkillsActivity</string>
+    <string name="registration_str">Registration</string>
+    <string name="title_activity_google_auth">GoogleAuthActivity</string>
+    <string name="close_str">Close</string>
+    <string name="title_activity_follow">FollowActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+</resources>

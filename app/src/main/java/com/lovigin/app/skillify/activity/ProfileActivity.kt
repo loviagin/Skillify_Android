@@ -61,6 +61,7 @@ import com.lovigin.app.skillify.`object`.User
 import com.lovigin.app.skillify.ui.theme.BrandBlue
 import com.lovigin.app.skillify.ui.theme.BrandLightRed
 import com.lovigin.app.skillify.ui.theme.SkillifyTheme
+import com.lovigin.app.skillify.worker.NotificationSender
 
 class ProfileActivity : ComponentActivity() {
 
@@ -314,6 +315,7 @@ class ProfileActivity : ComponentActivity() {
 
                                             user.value!!.subscribers.add(viewModel.user.value!!.id)
                                             viewModel.user.value!!.subscriptions.add(id.value)
+                                            NotificationSender.sendNotification(this@ProfileActivity, id.value, "New subscriber ${viewModel.user.value!!.first_name}")
                                         }
                                         restartActivity()
                                     },
