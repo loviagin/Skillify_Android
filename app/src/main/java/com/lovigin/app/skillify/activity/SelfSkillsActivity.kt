@@ -88,7 +88,7 @@ class SelfSkillsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
-                            title = { Text("My skills") },
+                            title = { Text(getString(R.string.self_skills_str)) },
                             navigationIcon = {
                                 IconButton(onClick = {
                                     saveData(skills.filter { it.level != null })
@@ -110,14 +110,16 @@ class SelfSkillsActivity : ComponentActivity() {
                             .background(Color.White),
                     ) {
                         FlowRow(
-                            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 5.dp),
                             verticalArrangement = Arrangement.Center
                         ) {
                             Chip(
                                 onClick = { /*TODO*/ },
                                 colors = ChipDefaults.chipColors(backgroundColor = Color.White)
                             ) {
-                                Text(text = "Learning skills:")
+                                Text(text = stringResource(R.string.learning_skills_txt))
                             }
                             if (App.userViewModel.user.value!!.learningSkills.isNotEmpty()) {
                                 App.userViewModel.user.value?.learningSkills?.forEach {
@@ -130,7 +132,7 @@ class SelfSkillsActivity : ComponentActivity() {
                                     finish()
                                     startActivity(Intent(this@SelfSkillsActivity, LearningSkillsActivity::class.java))
                                 }) {
-                                    Text(text = "Set now")
+                                    Text(text = stringResource(R.string.set_now_str))
                                 }
                             }
                         }
@@ -160,7 +162,7 @@ class SelfSkillsActivity : ComponentActivity() {
                             onSearch = {},
                             active = true,
                             onActiveChange = {},
-                            placeholder = { Text("Search ...") },
+                            placeholder = { Text(getString(R.string.search_str)) },
                             trailingIcon = {
                                 Icon(
                                     Icons.Filled.Search,
@@ -221,16 +223,16 @@ fun SkillView(text: String, level: String? = "") {
             if (level != null) {
                 when (level) {
                     "Beginner" -> {
-                        LevelSkillView("Intermediate", selectedOption) { option ->
+                        LevelSkillView(stringResource(R.string.intermediate_txt), selectedOption) { option ->
                             selectedOption = option
                         }
-                        LevelSkillView("Advanced", selectedOption) { option ->
+                        LevelSkillView(stringResource(R.string.advanced_txt), selectedOption) { option ->
                             selectedOption = option
                         }
                     }
 
                     "Intermediate" -> {
-                        LevelSkillView("Advanced", selectedOption) { option ->
+                        LevelSkillView(stringResource(R.string.advanced_txt), selectedOption) { option ->
                             selectedOption = option
                         }
                     }
@@ -240,13 +242,13 @@ fun SkillView(text: String, level: String? = "") {
                     }
                 }
             } else {
-                LevelSkillView("Beginner", selectedOption) { option ->
+                LevelSkillView(stringResource(R.string.beginner_txt), selectedOption) { option ->
                     selectedOption = option
                 }
-                LevelSkillView("Intermediate", selectedOption) { option ->
+                LevelSkillView(stringResource(R.string.intermediate_txt), selectedOption) { option ->
                     selectedOption = option
                 }
-                LevelSkillView("Advanced", selectedOption) { option ->
+                LevelSkillView(stringResource(R.string.advanced_txt), selectedOption) { option ->
                     selectedOption = option
                 }
             }

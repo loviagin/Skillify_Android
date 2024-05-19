@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -49,6 +50,7 @@ import com.google.firebase.ktx.Firebase
 import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.App.Companion.sharedPreferences
 import com.lovigin.app.skillify.Const.icons
+import com.lovigin.app.skillify.R
 import com.lovigin.app.skillify.activity.HeaderApp
 import com.lovigin.app.skillify.activity.ProfileActivity
 import com.lovigin.app.skillify.activity.element.GridScreen
@@ -82,7 +84,7 @@ fun HomeScreen(
             HeaderApp(context = context, navController = navHostController)
         }
         item {
-            HomeText(text = "Our top users")
+            HomeText(text = stringResource(R.string.our_top_users_str))
             TopProUsersView(
                 urlAvatar = viewModel.user.value?.urlAvatar,
                 context = context,
@@ -96,7 +98,7 @@ fun HomeScreen(
                     .padding(end = 18.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                HomeText(text = "Search by")
+                HomeText(text = stringResource(R.string.search_by_str))
                 TabRow(
                     selectedTabIndex = selectedTab
                 ) {
@@ -119,7 +121,7 @@ fun HomeScreen(
                             .background(if (selectedTab == 0) BrandBlue else Color.White)
                             .padding(5.dp)
                     ) {
-                        Text(text = "Self skill")
+                        Text(text = stringResource(R.string.self_skill_txt))
                     }
 
                     Tab(
@@ -141,7 +143,7 @@ fun HomeScreen(
                             .background(if (selectedTab == 1) BrandBlue else Color.White)
                             .padding(4.dp)
                     ) {
-                        Text(text = "Learning skill")
+                        Text(text = stringResource(R.string.learning_skills_str))
                     }
                 }
             } // row with Searching text
@@ -240,14 +242,14 @@ fun OfferSetSkills(navHostController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "To get more experience with our app",
+            text = stringResource(R.string.to_get_more_experience_with_our_app_txt),
             fontWeight = FontWeight.Bold
         )
-        Text(text = "Please set your skills in the Account tab")
+        Text(text = stringResource(R.string.please_set_your_skills_in_the_account_tab_txt))
         Button(onClick = {
             navHostController.navigate("account")
         }) {
-            Text("Go to Account")
+            Text(stringResource(R.string.go_to_account_txt))
         }
     }
 }
@@ -261,14 +263,14 @@ fun WelcomeHomeSkills(navHostController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "To get more experience with our app",
+            text = stringResource(R.string.to_get_more_experience_with_our_app_txt),
             fontWeight = FontWeight.Bold
         )
-        Text(text = "Please login or sign up in Skillify")
+        Text(text = stringResource(R.string.please_login_or_sign_up_in_skillify_txt))
         Button(onClick = {
             navHostController.navigate("account")
         }) {
-            Text("Go to Auth page")
+            Text(stringResource(R.string.go_to_auth_page_txt))
         }
     }
 }

@@ -34,7 +34,13 @@ import com.lovigin.app.skillify.R
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun ImageComponent(url: String, contentDescription: String, size: Dp = 100.dp, padding: Dp = 16.dp) {
+fun ImageComponent(
+    url: String,
+    contentDescription: String,
+    size: Dp = 100.dp,
+    padding: Dp = 16.dp,
+    defaultSize: Dp = size - 30.dp
+) {
     val painter = rememberImagePainter(
         data = url,
         builder = {
@@ -61,8 +67,8 @@ fun ImageComponent(url: String, contentDescription: String, size: Dp = 100.dp, p
             contentDescription = "Avatar",
             modifier = Modifier
                 .padding(padding)
-                .width((size - 30.dp))
-                .height((size - 30.dp))
+                .width(defaultSize)
+                .height(defaultSize)
                 .clip(CircleShape)
                 .background(Color.Gray)
                 .padding(padding),

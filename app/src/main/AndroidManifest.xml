@@ -28,6 +28,11 @@
         android:theme="@style/Theme.Skillify"
         tools:targetApi="31">
         <activity
+            android:name=".activity.ChatActivity"
+            android:exported="false"
+            android:label="@string/title_activity_chat"
+            android:theme="@style/Theme.Skillify" />
+        <activity
             android:name=".activity.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"

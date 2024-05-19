@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -110,7 +111,7 @@ fun UserView(user: User, context: Context) {
                             modifier = Modifier.padding(horizontal = 5.dp)
                         )
                     } else if (user.selfSkills.isEmpty()) {
-                        Text(text = " No self skills")
+                        Text(text = stringResource(R.string.no_self_skills_str))
                     } else {
                         user.selfSkills.forEach { skill ->
                             Text(
@@ -156,7 +157,7 @@ fun UserView(user: User, context: Context) {
                             modifier = Modifier.padding(horizontal = 5.dp)
                         )
                     } else if (user.learningSkills.isEmpty()) {
-                        Text(text = " No learning")
+                        Text(text = stringResource(R.string.no_learning_str))
                     } else {
                         user.learningSkills.forEach { skill ->
                             Text(

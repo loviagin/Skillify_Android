@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -48,13 +49,15 @@ fun PhoneAuthScreen(
     ) {
         Image(
             painter = painterResource(id = R.drawable.favicon),
-            contentDescription = "Skillify",
+            contentDescription = stringResource(R.string.app_name),
             Modifier
                 .width(90.dp)
                 .padding(10.dp)
         )
-        Text(text = "Enter your phone number",
-            modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp),
+        Text(text = stringResource(R.string.enter_your_phone_number_txt),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 5.dp),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium)
         Row(
@@ -66,10 +69,12 @@ fun PhoneAuthScreen(
                 onValueChange = {
                     phoneNumber = it.filter { char -> char.isDigit() }.take(12)
                 },
-                label = { Text("1 000 000 00 00") },
+                label = { Text(stringResource(R.string.default_tel)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp)
             )
         }
         Button(
@@ -77,16 +82,18 @@ fun PhoneAuthScreen(
                 isActive = true
                 authViewModel.sendVerificationCode("+${phoneNumber}", authViewModel.callbacks, context, navHostController)
             },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
             enabled = phoneNumber.isNotEmpty().and(phoneNumber.length > 10)
         ) {
-            Text("Send Verification Code")
+            Text(stringResource(R.string.send_verification_code_txt))
         }
         if (isActive) {
             TextField(
                 value = verificationCode,
                 onValueChange = { verificationCode = it },
-                label = { Text("Enter Verification Code") },
+                label = { Text(stringResource(R.string.enter_verification_code_str)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
@@ -95,10 +102,12 @@ fun PhoneAuthScreen(
                 onClick = {
                     authViewModel.verifyVerificationCode(verificationCode)
                 },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
                 enabled = verificationCode.isNotEmpty()
             ) {
-                Text("Verify Code")
+                Text(stringResource(R.string.verify_code_str))
             }
         }
     }

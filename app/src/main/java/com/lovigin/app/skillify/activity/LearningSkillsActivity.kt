@@ -28,8 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.Const
+import com.lovigin.app.skillify.R
 import com.lovigin.app.skillify.activity.ui.theme.SkillifyTheme
 import com.lovigin.app.skillify.`object`.Skill
 
@@ -67,7 +69,7 @@ class LearningSkillsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
-                            title = { Text("Learning skills") },
+                            title = { Text(text = stringResource(R.string.learning_skills_str)) },
                             navigationIcon = {
                                 IconButton(onClick = {
                                     saveData(skills.filter { it.level != null })
@@ -114,7 +116,7 @@ class LearningSkillsActivity : ComponentActivity() {
                             onSearch = {},
                             active = true,
                             onActiveChange = {},
-                            placeholder = { Text("Search ...") },
+                            placeholder = { Text(stringResource(R.string.search_str)) },
                             trailingIcon = {
                                 Icon(
                                     Icons.Filled.Search,
@@ -141,7 +143,6 @@ class LearningSkillsActivity : ComponentActivity() {
 
     private fun saveData(skills: List<Skill>) {
         if (skills != App.userViewModel.user.value?.selfSkills) {
-            Log.d("info", "saving data")
         }
     }
 }

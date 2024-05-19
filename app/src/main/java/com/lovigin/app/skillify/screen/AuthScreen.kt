@@ -100,14 +100,14 @@ fun AuthScreen(navHostController: NavHostController, context: Context) {
                 .padding(10.dp)
         )
         Text(
-            text = "Welcome abroad!",
+            text = stringResource(R.string.welcome_abroad_str),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
         TextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Your email") },
+            label = { Text(stringResource(R.string.your_email_str)) },
             leadingIcon = { Icon(imageVector = Icons.Filled.Email, contentDescription = "Email") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -134,7 +134,7 @@ fun AuthScreen(navHostController: NavHostController, context: Context) {
             onValueChange = { password = it },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.password_str)) },
             leadingIcon = { Icon(imageVector = Icons.Filled.Lock, contentDescription = "Email") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,17 +159,18 @@ fun AuthScreen(navHostController: NavHostController, context: Context) {
             Button(
                 onClick = {
                     if (email.isEmpty()) {
-                        errorEmail = "Email is empty"
+                        errorEmail = context.getString(R.string.email_is_empty_txt)
                         errorPass = ""
                     } else if (!email.contains("@")) {
-                        errorEmail = "Email is incorrect"
+                        errorEmail = context.getString(R.string.email_is_incorrect_txt)
                         errorPass = ""
                     } else if (password.isEmpty()) {
                         errorEmail = ""
-                        errorPass = "Password is empty"
+                        errorPass = context.getString(R.string.password_is_empty_txt)
                     } else if (password.length < 6) {
                         errorEmail = ""
-                        errorPass = "Password is less than 6 characters"
+                        errorPass =
+                            context.getString(R.string.password_is_less_than_6_characters_txt)
                     } else {
                         errorEmail = ""
                         errorPass = ""
@@ -179,24 +180,25 @@ fun AuthScreen(navHostController: NavHostController, context: Context) {
                 colors = ButtonDefaults.buttonColors(containerColor = BrandBlue)
             ) {
                 Text(
-                    text = "Sign in"
+                    text = stringResource(R.string.sign_in_str)
                 )
             }
 
             Button(
                 onClick = {
                     if (email.isEmpty()) {
-                        errorEmail = "Email is empty"
+                        errorEmail = context.getString(R.string.email_is_empty_txt)
                         errorPass = ""
                     } else if (!email.contains("@")) {
-                        errorEmail = "Email is incorrect"
+                        errorEmail = context.getString(R.string.email_is_incorrect_txt)
                         errorPass = ""
                     } else if (password.isEmpty()) {
                         errorEmail = ""
-                        errorPass = "Password is empty"
+                        errorPass = context.getString(R.string.password_is_empty_txt)
                     } else if (password.length < 6) {
                         errorEmail = ""
-                        errorPass = "Password is less than 6 characters"
+                        errorPass =
+                            context.getString(R.string.password_is_less_than_6_characters_txt)
                     } else {
                         errorEmail = ""
                         errorPass = ""
@@ -208,7 +210,7 @@ fun AuthScreen(navHostController: NavHostController, context: Context) {
                 Text(text = stringResource(R.string.registration_str))
             }
         }
-        Text("or use another methods", Modifier.padding(top = 15.dp))
+        Text(stringResource(R.string.or_use_another_methods_txt), Modifier.padding(top = 15.dp))
         Row(
             modifier = Modifier.padding(top = 10.dp)
         ) {
@@ -265,7 +267,7 @@ fun signInUser(
                 // If sign in fails, display a message to the user.
                 Toast.makeText(
                     context.applicationContext,
-                    "Email or password is incorrect",
+                    context.getString(R.string.email_or_password_is_incorrect_txt),
                     Toast.LENGTH_SHORT
                 ).show()
                 Log.w(TAG, "signInWithEmail:failure", task.exception)
@@ -290,7 +292,7 @@ fun signUpUser(
                 Log.w(TAG, "signUpWithEmail:failure", task.exception)
                 Toast.makeText(
                     context.applicationContext,
-                    "User with the same email is exist or an error occurred",
+                    context.getString(R.string.user_with_the_same_email_txt),
                     Toast.LENGTH_SHORT
                 ).show()
             }

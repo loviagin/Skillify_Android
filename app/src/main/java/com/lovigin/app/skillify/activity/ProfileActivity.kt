@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -97,13 +98,13 @@ class ProfileActivity : ComponentActivity() {
 
                 var expanded by remember { mutableStateOf(false) }
                 val contacts = listOf(
-                    "Share profile",
-                    "Add to favorites",
+                    stringResource(R.string.share_profile_str),
+                    stringResource(R.string.add_to_favorites_str),
                     if (viewModel.auth.currentUser != null && viewModel.user.value!!.blockedUsers.contains(
                             id.value
                         )
-                    ) "Unblock user"
-                    else "Block user"
+                    ) stringResource(R.string.unblock_user_str)
+                    else stringResource(R.string.block_user_str)
                 )
 
                 Box(
@@ -152,7 +153,7 @@ class ProfileActivity : ComponentActivity() {
                                                 text = { Text(text = contact) },
                                                 onClick = {
                                                     when (contact) {
-                                                        "Block user" -> {
+                                                        getString(R.string.block_user_str) -> {
                                                             val update: MutableList<String> =
                                                                 viewModel.user.value!!.blockedUsers
                                                             update.add(id.value)
@@ -165,7 +166,7 @@ class ProfileActivity : ComponentActivity() {
                                                             Log.d("TAG", "onCreate: blocked")
                                                         }
 
-                                                        "Unblock user" -> {
+                                                        getString(R.string.unblock_user_str) -> {
                                                             val update: MutableList<String> =
                                                                 viewModel.user.value!!.blockedUsers
                                                             update.remove(id.value)
@@ -181,7 +182,7 @@ class ProfileActivity : ComponentActivity() {
                                                         else -> {
                                                             Toast.makeText(
                                                                 this@ProfileActivity,
-                                                                "This function is in development",
+                                                                getString(R.string.in_development_str),
                                                                 Toast.LENGTH_SHORT
                                                             ).show()
                                                         }
@@ -249,7 +250,7 @@ class ProfileActivity : ComponentActivity() {
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     user.value?.let { Text(text = "${it.subscribers.size}") }
-                                    Text(text = "Subscribers")
+                                    Text(text = getString(R.string.subscribers_str))
                                 }
 
                                 Column(
@@ -268,7 +269,7 @@ class ProfileActivity : ComponentActivity() {
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     user.value?.let { Text(text = "${it.subscriptions.size}") }
-                                    Text(text = "Subscriptions")
+                                    Text(text = getString(R.string.subscriptions_str))
                                 }
                             }
                         } // card followers
@@ -281,7 +282,7 @@ class ProfileActivity : ComponentActivity() {
                                     onClick = { /*TODO*/ },
                                     colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
                                 ) {
-                                    Text(text = "Message", fontSize = 15.sp)
+                                    Text(text = stringResource(R.string.message_str), fontSize = 15.sp)
                                 }
                                 IconButton( // subscribe button
                                     onClick = {
@@ -347,7 +348,7 @@ class ProfileActivity : ComponentActivity() {
                         }
 
                         Text(
-                            text = "My skills",
+                            text = stringResource(R.string.my_skills_str),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 10.dp)
@@ -376,11 +377,14 @@ class ProfileActivity : ComponentActivity() {
                                 }
                             }
                         } else {
-                            Text(text = "${user.value!!.first_name} didn't set self skills")
+                            Text(text = stringResource(
+                                R.string.didn_t_set_self_skills_txt,
+                                user.value!!.first_name
+                            ))
                         }
 
                         Text(
-                            text = "Learning skills",
+                            text = getString(R.string.learning_skills_str),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 10.dp)
@@ -409,7 +413,10 @@ class ProfileActivity : ComponentActivity() {
                                 }
                             }
                         } else {
-                            Text(text = "${user.value!!.first_name} didn't set learning skills")
+                            Text(text = stringResource(
+                                R.string.didn_t_set_learning_skills_txt,
+                                user.value!!.first_name
+                            ))
                         }
 
                         Spacer(modifier = Modifier.padding(25.dp))

@@ -53,7 +53,7 @@ class SettingsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
-                            title = { Text("Settings") },
+                            title = { Text(stringResource(R.string.settings_str)) },
                             navigationIcon = {
                                 BackButton {
                                     finish()
@@ -65,7 +65,7 @@ class SettingsActivity : ComponentActivity() {
                     Column(
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        SettingsItemView(title = "Delete account", description = "") {
+                        SettingsItemView(title = stringResource(R.string.delete_account_str), description = "") {
                             val intent =
                                 Intent(
                                     Intent.ACTION_VIEW,
@@ -73,7 +73,7 @@ class SettingsActivity : ComponentActivity() {
                                 )
                             startActivity(intent)
                         }
-                        SettingsItemView(title = "App info", description = "") {
+                        SettingsItemView(title = stringResource(R.string.app_info_str), description = "") {
                             counter.intValue++
                             if (counter.intValue > 4) {
                                 Toast.makeText(
@@ -88,7 +88,7 @@ class SettingsActivity : ComponentActivity() {
                                 onDismissRequest = {},
                                 confirmButton = {
                                     Button(onClick = {
-                                        if (text == "1234567890") {
+                                        if (text == "") {
                                             Toast.makeText(
                                                 this@SettingsActivity,
                                                 "You're now a PRO user",

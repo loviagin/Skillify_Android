@@ -86,7 +86,9 @@ fun AccountScreen(navController: NavHostController, context: Context) {
 
     Box(Modifier.pullRefresh(state)) {
         Column(
-            modifier = Modifier.padding(top = 20.dp).verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             if (!refreshing) {
                 Card(
@@ -219,11 +221,14 @@ fun AccountScreen(navController: NavHostController, context: Context) {
                 ) {
                     AccountComponent(
                         icon = R.drawable.fi_sr_star,
-                        description = "Skillify PRO",
+                        description = stringResource(id = R.string.skillify_pro_str),
                         name = stringResource(id = R.string.skillify_pro_str),
                         color = BrandBlue,
                         action = {
-                            Toast.makeText(context, "Coming soon", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.coming_soon_str), Toast.LENGTH_SHORT
+                            ).show()
                         }
                     )
 
@@ -280,7 +285,7 @@ fun AccountScreen(navController: NavHostController, context: Context) {
                     AccountComponent(
                         icon = R.drawable.fi_rr_link,
                         description = "Instagram link",
-                        name = "Follow Us on Instagram",
+                        name = stringResource(R.string.follow_us_on_instagram_str),
                         action = {
                             val intent =
                                 Intent(
@@ -296,7 +301,7 @@ fun AccountScreen(navController: NavHostController, context: Context) {
                     AccountComponent(
                         icon = R.drawable.fi_rr_globe,
                         description = "Our website link",
-                        name = "Check our website",
+                        name = stringResource(R.string.check_our_website_str),
                         action = {
                             val intent =
                                 Intent(Intent.ACTION_VIEW, Uri.parse("https://skillify.space"))
@@ -314,7 +319,7 @@ fun AccountScreen(navController: NavHostController, context: Context) {
                     AccountComponent(
                         icon = R.drawable.fi_rr_settings,
                         description = "Other settings",
-                        name = "Other settings",
+                        name = stringResource(R.string.other_settings_str),
                         action = {
                             context.startActivity(Intent(context, SettingsActivity::class.java))
                         }
@@ -325,7 +330,7 @@ fun AccountScreen(navController: NavHostController, context: Context) {
                     AccountComponent(
                         icon = R.drawable.fi_rr_logout,
                         description = "Log out",
-                        name = "Log out",
+                        name = stringResource(R.string.log_out_str),
                         color = BrandLightRed,
                         action = {
                             viewModel.logout()
@@ -389,6 +394,6 @@ fun BlurRectangle() {
             .blur(16.dp), // Применяем заблюривание
         contentAlignment = Alignment.Center
     ) {
-        Text("Loading...", color = Color.White)
+        Text(stringResource(R.string.loading_txt), color = Color.White)
     }
 }

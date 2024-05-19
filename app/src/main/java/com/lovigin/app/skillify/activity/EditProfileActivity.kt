@@ -53,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -76,7 +77,10 @@ class EditProfileActivity : ComponentActivity() {
 
     private val viewModel = App.userViewModel
     private val user = viewModel.user.value
-    private val items = listOf("-", "Male", "Female", "Other")
+    private val items = listOf(
+        "-", getString(R.string.male_txt),
+        getString(R.string.female_txt), getString(R.string.other_txt)
+    )
     private val newValues = mutableMapOf<String, Any>()
     private var imageUrl by mutableStateOf(user?.urlAvatar ?: "")
 
@@ -111,7 +115,8 @@ class EditProfileActivity : ComponentActivity() {
                     pickImageLauncher.launch("image/*")
                 } else {
                     // Разрешение отклонено, показываем сообщение
-                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,
+                        getString(R.string.permission_denied_txt), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -123,7 +128,7 @@ class EditProfileActivity : ComponentActivity() {
                 } else {
                     Toast.makeText(
                         this,
-                        "Permission for media images is denied",
+                        getString(R.string.permission_is_denied_txt),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -161,7 +166,7 @@ class EditProfileActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
-                            title = { Text(text = "Edit profile") },
+                            title = { Text(text = stringResource(R.string.edit_profile_str)) },
                             navigationIcon = {
                                 if (user!!.first_name.isNotEmpty()) {
                                     IconButton(onClick = { finish() }) {
@@ -190,7 +195,7 @@ class EditProfileActivity : ComponentActivity() {
                             )
 
                             Text(
-                                text = "Choose avatar*",
+                                text = stringResource(R.string.choose_avatar_str),
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(16.dp))
                                     .background(Color.Gray.copy(alpha = 0.3f))
@@ -208,7 +213,7 @@ class EditProfileActivity : ComponentActivity() {
                                 newValues["first_name"] = it
 //                                viewModel.user.value!!.first_name = first_name
                             },
-                            label = { Text(text = "First name *") },
+                            label = { Text(text = stringResource(R.string.first_name_str)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp)
@@ -222,7 +227,7 @@ class EditProfileActivity : ComponentActivity() {
                                 newValues["last_name"] = it
 //                                viewModel.user.value!!.last_name = last_name
                             },
-                            label = { Text(text = "Last name") },
+                            label = { Text(text = stringResource(R.string.last_name_str)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp)
@@ -237,7 +242,7 @@ class EditProfileActivity : ComponentActivity() {
                                 newValues["bio"] = it
 //                                viewModel.user.value!!.bio = bio
                             },
-                            label = { Text(text = "Short description") },
+                            label = { Text(text = stringResource(R.string.short_description_str)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp)
@@ -252,7 +257,7 @@ class EditProfileActivity : ComponentActivity() {
                                 newValues["nickname"] = it
 //                                viewModel.user.value!!.nickname = nickname
                             },
-                            label = { Text(text = "Nickname *") },
+                            label = { Text(text = stringResource(R.string.nickname_str)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp)
@@ -268,7 +273,7 @@ class EditProfileActivity : ComponentActivity() {
                                 .padding(vertical = 16.dp)
                         ) {
                             Text(
-                                text = "Your birthday",
+                                text = stringResource(R.string.your_birthday_str),
                                 modifier = Modifier.padding(16.dp)
                             )
 
@@ -307,7 +312,7 @@ class EditProfileActivity : ComponentActivity() {
                                 .padding(end = 16.dp)
                         ) {
                             Text(
-                                text = "Select your gender",
+                                text = stringResource(R.string.select_your_gender_str),
                                 modifier = Modifier.padding(16.dp)
                             )
 
@@ -395,7 +400,7 @@ class EditProfileActivity : ComponentActivity() {
                                             .padding(horizontal = 16.dp)
                                             .padding(bottom = 16.dp)
                                     ) {
-                                        Text(text = "Save")
+                                        Text(text = stringResource(R.string.save_str))
                                     }
                                 }
                             }
@@ -406,7 +411,7 @@ class EditProfileActivity : ComponentActivity() {
                                 value = user.email,
                                 enabled = false,
                                 onValueChange = {},
-                                label = { Text(text = "Email") },
+                                label = { Text(text = stringResource(R.string.email_str)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 10.dp)
@@ -417,7 +422,7 @@ class EditProfileActivity : ComponentActivity() {
                                 value = user.phone,
                                 enabled = false,
                                 onValueChange = {},
-                                label = { Text(text = "Phone") },
+                                label = { Text(text = stringResource(R.string.phone_str)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 10.dp)
@@ -425,30 +430,33 @@ class EditProfileActivity : ComponentActivity() {
                             )
                         }
                         Button(onClick = {
-                            Log.d("TAG", "${newValues["birthday"]}")
                             if (!newValues.containsKey("first_name") && first_name.isEmpty()) {
                                 Toast.makeText(
                                     this@EditProfileActivity,
-                                    "First name is required",
+                                    getString(R.string.first_name_is_required_txt),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (!newValues.containsKey("nickname") && nickname.isEmpty()) {
                                 Toast.makeText(
                                     this@EditProfileActivity,
-                                    "Nickname is required",
+                                    getString(R.string.nickname_is_required_txt),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (!newValues.containsKey("urlAvatar") && imageUrl.isEmpty()) {
                                 Toast.makeText(
                                     this@EditProfileActivity,
-                                    "Avatar is required",
+                                    getString(R.string.avatar_is_required_txt),
                                     Toast.LENGTH_SHORT
                                 ).show()
-                            } else if (newValues["birthday"]?.let { App.isOld((it as? Double) ?: return@let false) } != true &&
+                            } else if (newValues["birthday"]?.let {
+                                    App.isOld(
+                                        (it as? Double) ?: return@let false
+                                    )
+                                } != true &&
                                 !App.isOld(birthday.time.toDouble())) {
                                 Toast.makeText(
                                     this@EditProfileActivity,
-                                    "You must be 12 years old or older",
+                                    getString(R.string.you_must_be_12_years_old_or_older_txt),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -457,13 +465,12 @@ class EditProfileActivity : ComponentActivity() {
                                 App.userViewModel.auth.currentUser!!.uid,
                                 newValues
                             )
-                            Log.d("info", "newValues: $newValues")
                             finish()
                         }, modifier = Modifier.padding(16.dp)) {
                             Text(text = "Save")
                         }
                         Text(
-                            text = "* - required fields",
+                            text = stringResource(R.string.required_fields_str),
                             fontSize = 12.sp,
                             color = Color.Gray,
                             modifier = Modifier
@@ -487,22 +494,14 @@ class EditProfileActivity : ComponentActivity() {
 
                 taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { downloadUri ->
                     val downloadUrl = downloadUri.toString()
-                    Log.d("TAG", "File Location: $downloadUrl")
 
                     imageUrl = downloadUrl
                     newValues["urlAvatar"] = downloadUrl
-//                    viewModel.updateData(
-//                        "users",
-//                        App.userViewModel.auth.currentUser!!.uid,
-//                        mapOf("urlAvatar" to downloadUrl)
-//                    )
                 }
                 Log.d("TAG", "uploadImageToFirebase: Success")
-                // Загрузка успешна, обработайте URL изображения, например, покажите сообщение или обновите UI
             }
             .addOnFailureListener {
                 Log.d("TAG", "uploadImageToFirebase: Failure")
-                // Обработка ошибки загрузки
             }
 
     }

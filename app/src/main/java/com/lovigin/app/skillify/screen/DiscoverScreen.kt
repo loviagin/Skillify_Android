@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -119,13 +120,13 @@ fun DiscoverScreen(
                             colorFilter = ColorFilter.tint(Color.White)
                         )
                         Text(
-                            text = "Courses",
+                            text = stringResource(R.string.courses_str),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                             color = Color.White
                         )
                         Text(
-                            text = "Coming soon",
+                            text = stringResource(R.string.coming_soon_str),
                             textAlign = TextAlign.Center,
                             fontSize = 14.sp,
                             color = Color.White
@@ -162,13 +163,13 @@ fun DiscoverScreen(
                             colorFilter = ColorFilter.tint(Color.White)
                         )
                         Text(
-                            text = "Chat groups",
+                            text = stringResource(R.string.chat_groups_txt),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                             color = Color.White
                         )
                         Text(
-                            text = "Coming soon",
+                            text = stringResource(R.string.coming_soon_str),
                             textAlign = TextAlign.Center,
                             fontSize = 14.sp,
                             color = Color.White
@@ -189,20 +190,20 @@ fun DiscoverScreen(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.fi_sr_star),
-                            contentDescription = "Chat groups",
+                            contentDescription = "Pro",
                             Modifier
                                 .size(50.dp)
                                 .padding(bottom = 5.dp),
                             colorFilter = ColorFilter.tint(Color.White)
                         )
                         Text(
-                            text = "PRO",
+                            text = stringResource(R.string.pro_str),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                             color = Color.White
                         )
                         Text(
-                            text = "Coming soon",
+                            text = stringResource(R.string.coming_soon_str),
                             textAlign = TextAlign.Center,
                             fontSize = 14.sp,
                             color = Color.White
@@ -219,7 +220,7 @@ fun DiscoverScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 10.dp),
-                placeholder = { Text(text = "Search...") },
+                placeholder = { Text(text = stringResource(R.string.search_str)) },
                 maxLines = 1
             )
         }

@@ -24,6 +24,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.lovigin.app.skillify.Const
 import com.lovigin.app.skillify.R
 import com.lovigin.app.skillify.activity.ProfileActivity
@@ -113,8 +114,7 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Star,
-                    contentDescription = "Check",
-//                    tint = Color.White
+                    contentDescription = "Check"
                 )
                 Text(text = ": ", fontWeight = FontWeight.Bold)
                 if (user.selfSkills.size > 3) {
@@ -140,7 +140,7 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
                         modifier = Modifier.padding(horizontal = 5.dp)
                     )
                 } else if (user.selfSkills.isEmpty()) {
-                    Text(text = " No self skills")
+                    Text(text = stringResource(R.string.no_self_skills_str))
                 } else {
                     user.selfSkills.forEach { skill ->
                         Text(
@@ -186,7 +186,7 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
                         modifier = Modifier.padding(horizontal = 5.dp)
                     )
                 } else if (user.learningSkills.isEmpty()) {
-                    Text(text = " No learning")
+                    Text(text = stringResource(R.string.no_learning_str))
                 } else {
                     user.learningSkills.forEach { skill ->
                         Text(

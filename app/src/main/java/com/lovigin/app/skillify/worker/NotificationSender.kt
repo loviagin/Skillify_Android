@@ -12,11 +12,18 @@ import java.net.URL
 class NotificationSender {
 
     companion object {
-        fun sendNotification(context: Context, userId: String, message: String) {
+        fun sendNotification(
+            context: Context,
+            userId: String,
+            message: String,
+            title: String = "Skillify"
+        ) {
             val json = JSONObject()
             json.put("app_id", context.getString(R.string.onesignal_app_id))
             json.put("include_external_user_ids", JSONArray().put(userId))
             json.put("contents", JSONObject().put("en", message))
+            json.put("headings", JSONObject().put("en", title))  // Добавляем заголовок
+
 
             val thread = Thread {
                 try {
@@ -25,8 +32,10 @@ class NotificationSender {
                     con.apply {
                         requestMethod = "POST"
                         setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                        setRequestProperty("Authorization",
-                            context.getString(R.string.onesignal_key))
+                        setRequestProperty(
+                            "Authorization",
+                            context.getString(R.string.onesignal_key)
+                        )
                         doOutput = true
                         val outputStream = outputStream
                         outputStream.write(json.toString().toByteArray(charset("UTF-8")))
