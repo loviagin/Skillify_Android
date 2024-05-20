@@ -1,10 +1,18 @@
 <resources>
-    <string name="app_name">Skillify</string>
     <string name="title_activity_messages">MessagesActivity</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_activity_auth_screen">AuthScreen</string>
     <string name="title_activity_edit_profile">EditProfileActivity</string>
     <string name="title_activity_register_screen">RegisterScreen</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_self_skills">SelfSkillsActivity</string>
+    <string name="title_activity_learning_skills">LearningSkillsActivity</string>
+    <string name="title_activity_google_auth">GoogleAuthActivity</string>
+    <string name="title_activity_follow">FollowActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_chat">ChatActivity</string>
+    <!-- что выше не редактируем-->
+    <string name="app_name">Skillify</string>
     <string name="skillify_pro_str">Skillify PRO</string>
     <string name="configure_your_account_str">Configure your account</string>
     <string name="only_for_pro_users_str">(Only for PRO users)</string>
@@ -13,16 +21,9 @@
     <string name="self_skills_str">My skills</string>
     <string name="learning_skills_str">Learning skills</string>
     <string name="about_us_str">About us</string>
-    <string name="title_activity_profile">ProfileActivity</string>
-    <string name="title_activity_self_skills">SelfSkillsActivity</string>
     <string name="high_level_skill_text">You\'re almost done with this skill</string>
-    <string name="title_activity_learning_skills">LearningSkillsActivity</string>
     <string name="registration_str">Registration</string>
-    <string name="title_activity_google_auth">GoogleAuthActivity</string>
     <string name="close_str">Close</string>
-    <string name="title_activity_follow">FollowActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-    <string name="title_activity_chat">ChatActivity</string>
     <string name="no_self_skills_str">" No self skills"</string>
     <string name="no_learning_str">" No learning"</string>
     <string name="in_development_str">This function is in development</string>
@@ -93,7 +94,7 @@
     <string name="email_or_password_is_incorrect_txt">Email or password is incorrect</string>
     <string name="user_with_the_same_email_txt">User with the same email is exist or an error occurred</string>
     <string name="courses_str">Courses</string>
-    <string name="chat_groups_txt">Chat groups</string>
+    <string name="chat_groups_txt">Groups</string>
     <string name="pro_str">PRO</string>
     <string name="our_top_users_str">Our top users</string>
     <string name="search_by_str">Search by</string>
@@ -105,7 +106,8 @@
     <string name="go_to_auth_page_txt">Go to Auth page</string>
     <string name="enter_your_phone_number_txt">Enter your phone number</string>
     <string name="send_verification_code_txt">Send Verification Code</string>
-    <string name="default_tel">1 000 000 00 00</string>
+    <string name="default_tel">1 000 000 00 00</string> <!-- можно добавить разные коды страны для разных языков-->
     <string name="enter_verification_code_str">Enter Verification Code</string>
     <string name="verify_code_str">Verify Code</string>
+    <string name="max_skills_txt">At this time you can add only up to 5 skills</string>
 </resources>

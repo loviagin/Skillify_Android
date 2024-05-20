@@ -26,7 +26,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,24 +44,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.R
 import com.lovigin.app.skillify.activity.element.AvatarComponent
 import com.lovigin.app.skillify.activity.element.BackButton
+import com.lovigin.app.skillify.`object`.Message
 import com.lovigin.app.skillify.`object`.User
 import com.lovigin.app.skillify.ui.theme.BrandBlue
 import com.lovigin.app.skillify.ui.theme.BrandLightRed
 import com.lovigin.app.skillify.ui.theme.SkillifyTheme
 import com.lovigin.app.skillify.worker.NotificationSender
+import java.util.LinkedList
 
 class ProfileActivity : ComponentActivity() {
 
@@ -112,6 +113,12 @@ class ProfileActivity : ComponentActivity() {
                         .fillMaxSize()
                         .verticalScroll(state = rememberScrollState())
                 ) {
+                    if ((user.value?.blocked ?: 0) > 3) {
+                        Text(
+                            text = getString(R.string.user_blocked_txt),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -279,14 +286,70 @@ class ProfileActivity : ComponentActivity() {
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Button(
-                                    onClick = { /*TODO*/ },
+                                    onClick = {
+                                        val blockedText =
+                                            if (user.value!!.blockedUsers.contains(App.userViewModel.user.value!!.id)) getString(
+                                                R.string.you_was_blocked_txt,
+                                                user.value!!.first_name
+                                            )
+                                            else if (App.userViewModel.user.value!!.blockedUsers.contains(
+                                                    user.value!!.id
+                                                )
+                                            ) getString(
+                                                R.string.you_blocked_str, user.value!!.first_name
+                                            )
+                                            else ""
+
+                                        var messageId = user.value!!.messages.find {
+                                            it.keys.contains(App.userViewModel.user.value!!.id)
+                                        }?.values?.firstOrNull()
+
+                                        if (messageId == null) {
+                                            createMessage { m ->
+                                                messageId = m
+                                                startActivity(
+                                                    Intent(
+                                                        this@ProfileActivity,
+                                                        ChatActivity::class.java
+                                                    )
+                                                        .putExtra("userId", id.value)
+                                                        .putExtra(
+                                                            "name",
+                                                            "${user.value!!.first_name} ${user.value!!.last_name}"
+                                                        )
+                                                        .putExtra("imageUrl", user.value!!.urlAvatar)
+                                                        .putExtra("idMessage", messageId)
+                                                        .putExtra("blockedText", blockedText)
+                                                )
+                                            }
+                                        } else {
+                                            startActivity(
+                                                Intent(
+                                                    this@ProfileActivity,
+                                                    ChatActivity::class.java
+                                                )
+                                                    .putExtra("userId", id.value)
+                                                    .putExtra(
+                                                        "name",
+                                                        "${user.value!!.first_name} ${user.value!!.last_name}"
+                                                    )
+                                                    .putExtra("imageUrl", user.value!!.urlAvatar)
+                                                    .putExtra("idMessage", messageId)
+                                                    .putExtra("blockedText", blockedText)
+                                            )
+                                        }
+                                    },
                                     colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
                                 ) {
-                                    Text(text = stringResource(R.string.message_str), fontSize = 15.sp)
+                                    Text(
+                                        text = stringResource(R.string.message_str),
+                                        fontSize = 15.sp
+                                    )
                                 }
-                                IconButton( // subscribe button
+                                IconButton(
+                                    // subscribe button
                                     onClick = {
-                                        if (viewModel.user.value!!.subscriptions.contains(id.value))  {
+                                        if (viewModel.user.value!!.subscriptions.contains(id.value)) {
                                             viewModel.deleteData(
                                                 "users",
                                                 viewModel.user.value!!.id,
@@ -316,7 +379,11 @@ class ProfileActivity : ComponentActivity() {
 
                                             user.value!!.subscribers.add(viewModel.user.value!!.id)
                                             viewModel.user.value!!.subscriptions.add(id.value)
-                                            NotificationSender.sendNotification(this@ProfileActivity, id.value, "New subscriber ${viewModel.user.value!!.first_name}")
+                                            NotificationSender.sendNotification(
+                                                this@ProfileActivity,
+                                                id.value,
+                                                "New subscriber ${viewModel.user.value!!.first_name}"
+                                            )
                                         }
                                         restartActivity()
                                     },
@@ -377,10 +444,12 @@ class ProfileActivity : ComponentActivity() {
                                 }
                             }
                         } else {
-                            Text(text = stringResource(
-                                R.string.didn_t_set_self_skills_txt,
-                                user.value!!.first_name
-                            ))
+                            Text(
+                                text = stringResource(
+                                    R.string.didn_t_set_self_skills_txt,
+                                    user.value!!.first_name
+                                )
+                            )
                         }
 
                         Text(
@@ -413,10 +482,12 @@ class ProfileActivity : ComponentActivity() {
                                 }
                             }
                         } else {
-                            Text(text = stringResource(
-                                R.string.didn_t_set_learning_skills_txt,
-                                user.value!!.first_name
-                            ))
+                            Text(
+                                text = stringResource(
+                                    R.string.didn_t_set_learning_skills_txt,
+                                    user.value!!.first_name
+                                )
+                            )
                         }
 
                         Spacer(modifier = Modifier.padding(25.dp))
@@ -424,6 +495,38 @@ class ProfileActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun createMessage(onMessageCreated: (String) -> Unit) {
+        Log.d("TAG", "creating message")
+        val message = Message(
+            lastData = listOf("", "", ""),
+            uids = listOf(App.userViewModel.user.value!!.id, id.value),
+            messages = LinkedList(),
+            time = System.currentTimeMillis() / 1000.0
+        )
+
+        Firebase.firestore
+            .collection("messages")
+            .document(message.id)
+            .set(message)
+            .addOnSuccessListener {
+                App.messagesViewModel.messages.add(message)
+                App.userViewModel.user.value!!.messages.add(mapOf(id.value to message.id) as MutableMap<String, String>)
+                App.messagesViewModel.loadMessages()
+
+                Firebase.firestore
+                    .collection("users")
+                    .document(App.userViewModel.user.value!!.id)
+                    .update("messages", FieldValue.arrayUnion(mapOf(id.value to message.id)))
+
+                Firebase.firestore
+                    .collection("users")
+                    .document(id.value)
+                    .update("messages", FieldValue.arrayUnion(mapOf(App.userViewModel.user.value!!.id to message.id)))
+
+                onMessageCreated(message.id)
+            }
     }
 
     private fun restartActivity() {

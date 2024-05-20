@@ -83,7 +83,8 @@ fun DiscoverScreen(
                 contentDescription = "News 1",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(15.dp),
+                    .padding(top = 50.dp)
+                    .padding(horizontal = 15.dp),
                 contentScale = ContentScale.FillWidth
             )
         }

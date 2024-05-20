@@ -27,8 +27,8 @@ android {
         applicationId = "com.lovigin.app.skillify"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0" // UPDATE in User.java, UserViewModel.java
+        versionCode = 3
+        versionName = "1.0.3" // UPDATE in User.java, UserViewModel.java
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

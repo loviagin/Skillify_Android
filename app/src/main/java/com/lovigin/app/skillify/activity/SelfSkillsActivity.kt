@@ -3,6 +3,7 @@ package com.lovigin.app.skillify.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,7 +26,6 @@ import androidx.compose.material.RadioButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -42,12 +42,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.Const
 import com.lovigin.app.skillify.R
@@ -55,6 +55,21 @@ import com.lovigin.app.skillify.activity.ui.theme.SkillifyTheme
 import com.lovigin.app.skillify.`object`.Skill
 
 class SelfSkillsActivity : ComponentActivity() {
+
+    var skills = mutableStateListOf<Skill>().apply {
+        Const.icons.keys.forEach { item ->
+            if (App.userViewModel.user.value?.selfSkills?.find { it.name == item } != null) {
+                add(
+                    Skill(
+                        name = item,
+                        level = App.userViewModel.user.value?.selfSkills?.find { it.name == item }!!.level
+                    )
+                )
+            } else {
+                add(Skill(name = item))
+            }
+        }
+    }
 
     @OptIn(
         ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
@@ -64,23 +79,6 @@ class SelfSkillsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
-            val skills = remember {
-                mutableStateListOf<Skill>().apply {
-                    Const.icons.keys.forEach { item ->
-                        if (App.userViewModel.user.value?.selfSkills?.find { it.name == item } != null) {
-                            add(
-                                Skill(
-                                    name = item,
-                                    level = App.userViewModel.user.value?.selfSkills?.find { it.name == item }!!.level
-                                )
-                            )
-                        } else {
-                            add(Skill(name = item))
-                        }
-                    }
-                }
-            }
             var searchQuery by remember { mutableStateOf("") }
 
             SkillifyTheme {
@@ -123,14 +121,32 @@ class SelfSkillsActivity : ComponentActivity() {
                             }
                             if (App.userViewModel.user.value!!.learningSkills.isNotEmpty()) {
                                 App.userViewModel.user.value?.learningSkills?.forEach {
-                                    Chip(onClick = { /*TODO*/ }) {
-                                        Text(text = it.name)
+                                    Chip(
+                                        onClick = {
+                                            finish()
+                                            startActivity(
+                                                Intent(
+                                                    this@SelfSkillsActivity,
+                                                    LearningSkillsActivity::class.java
+                                                )
+                                            )
+                                        },
+                                        modifier = Modifier.padding(horizontal = 5.dp)
+                                    ) {
+                                        Text(
+                                            text = it.name
+                                        )
                                     }
                                 }
                             } else {
                                 Chip(onClick = {
                                     finish()
-                                    startActivity(Intent(this@SelfSkillsActivity, LearningSkillsActivity::class.java))
+                                    startActivity(
+                                        Intent(
+                                            this@SelfSkillsActivity,
+                                            LearningSkillsActivity::class.java
+                                        )
+                                    )
                                 }) {
                                     Text(text = stringResource(R.string.set_now_str))
                                 }
@@ -174,9 +190,11 @@ class SelfSkillsActivity : ComponentActivity() {
                             )
                         ) {
                             LazyColumn {
-                                skills.forEach {
+                                skills.forEach { skill ->
                                     item {
-                                        SkillView(it.name, it.level)
+                                        SkillView(skill.name, skill.level) { selectedLevel ->
+                                            skill.level = selectedLevel
+                                        }
                                     }
                                 }
                             }
@@ -189,87 +207,91 @@ class SelfSkillsActivity : ComponentActivity() {
 
     private fun saveData(skills: List<Skill>) {
         if (skills != App.userViewModel.user.value?.selfSkills) {
-            Log.d("info", "saving data")
-        }
-    }
-}
-
-@Composable
-fun SkillView(text: String, level: String? = "") {
-    var isOpen by remember { mutableStateOf(false) }
-
-    Row(
-        modifier = Modifier
-            .padding(16.dp)
-            .clickable {
-                isOpen = !isOpen
-            }
-    ) {
-        Text(text = Const.icons.getValue(text), modifier = Modifier.padding(end = 10.dp))
-        Text(text = text, modifier = Modifier.padding(end = 10.dp))
-        Spacer(modifier = Modifier.weight(1f))
-        if (level != null) {
-            Text(text = level)
+            val updatedData = skills.filter { it.level != null }
+            Log.d("info", "saving data $updatedData")
+            App.userViewModel.updateData(
+                "users",
+                App.userViewModel.user.value!!.id,
+                mapOf("selfSkills" to updatedData)
+            )
         }
     }
 
-    if (isOpen) {
-        var selectedOption by remember { mutableStateOf("") }
+    @Composable
+    fun SkillView(text: String, level: String?, onLevelSelected: (String?) -> Unit) {
+        var isOpen by remember { mutableStateOf(false) }
+        var selectedOption by remember { mutableStateOf(level) }
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable {
+                    if (skills.filter { it.level != null }.size > 5) {
+                        Toast.makeText(this, getString(R.string.max_skills_txt), Toast.LENGTH_SHORT).show()
+                    } else if (!isOpen && selectedOption != null) {
+                        onLevelSelected(null)
+                        selectedOption = null
+                        Log.d("TAG", "info")
+                    } else {
+                        isOpen = !isOpen
+                    }
+                }
         ) {
-            if (level != null) {
-                when (level) {
-                    "Beginner" -> {
-                        LevelSkillView(stringResource(R.string.intermediate_txt), selectedOption) { option ->
-                            selectedOption = option
-                        }
-                        LevelSkillView(stringResource(R.string.advanced_txt), selectedOption) { option ->
-                            selectedOption = option
-                        }
-                    }
+            Text(text = Const.icons.getValue(text), modifier = Modifier.padding(end = 10.dp))
+            Text(text = text, modifier = Modifier.padding(end = 10.dp))
+            Spacer(modifier = Modifier.weight(1f))
+            selectedOption?.let {
+                Text(text = it)
+            }
+        }
 
-                    "Intermediate" -> {
-                        LevelSkillView(stringResource(R.string.advanced_txt), selectedOption) { option ->
-                            selectedOption = option
-                        }
-                    }
-
-                    else -> {
-                        Text(text = stringResource(R.string.high_level_skill_text))
-                    }
-                }
-            } else {
-                LevelSkillView(stringResource(R.string.beginner_txt), selectedOption) { option ->
+        if (isOpen) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                LevelSkillView(
+                    stringResource(R.string.beginner_txt),
+                    selectedOption
+                ) { option ->
                     selectedOption = option
+                    onLevelSelected(option)
+                    isOpen = false
                 }
-                LevelSkillView(stringResource(R.string.intermediate_txt), selectedOption) { option ->
+                LevelSkillView(
+                    stringResource(R.string.intermediate_txt),
+                    selectedOption
+                ) { option ->
                     selectedOption = option
+                    onLevelSelected(option)
+                    isOpen = false
                 }
-                LevelSkillView(stringResource(R.string.advanced_txt), selectedOption) { option ->
+                LevelSkillView(
+                    stringResource(R.string.advanced_txt),
+                    selectedOption
+                ) { option ->
                     selectedOption = option
+                    onLevelSelected(option)
+                    isOpen = false
                 }
             }
         }
+
+        HorizontalDivider(
+            modifier =
+            Modifier.padding(horizontal = 16.dp),
+            thickness = 0.5.dp
+        )
     }
 
-    HorizontalDivider(
-        modifier =
-        Modifier.padding(horizontal = 16.dp),
-        thickness = 0.5.dp
-    )
-}
-
-@Composable
-fun LevelSkillView(text: String, selectedOption: String, onOptionSelected: (String) -> Unit) {
-    Card(
-        modifier = Modifier.clickable {
-            onOptionSelected(text)
-        }
-    ) {
-        Row {
+    @Composable
+    fun LevelSkillView(text: String, selectedOption: String?, onOptionSelected: (String) -> Unit) {
+        Row(
+            modifier = Modifier.clickable {
+                onOptionSelected(text)
+            },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             RadioButton(
                 selected = selectedOption == text,
                 onClick = { onOptionSelected(text) }

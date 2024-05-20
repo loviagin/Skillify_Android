@@ -280,7 +280,7 @@ fun TopProUsersView(urlAvatar: String? = null, context: Context, viewModel: User
     val proUsers = remember { mutableStateListOf<User>() }
 
     LaunchedEffect(true) {
-        loadProUsers(proUsers, viewModel)
+        loadProUsers(proUsers)
     }
 
     LazyRow(
@@ -359,10 +359,11 @@ fun ProUser(
     }
 }
 
-private fun loadProUsers(proUsers: MutableList<User>, viewModel: UserViewModel) {
+private fun loadProUsers(proUsers: MutableList<User>) {
     Firebase.firestore
         .collection("users")
         .whereGreaterThan("pro", System.currentTimeMillis() / 1000)
+        .whereLessThan("blocked", 3)
         .get()
         .addOnSuccessListener {
             if (it != null && !it.isEmpty) {

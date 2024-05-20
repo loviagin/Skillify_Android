@@ -98,7 +98,6 @@ class ChatActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 loadChats(idMessage) {
                     coroutineScope.launch {
-                        // Ожидаем завершения загрузки сообщений и их отображения
                         snapshotFlow { messages.size }
                             .collect {
                                 if (messages.isNotEmpty()) {
@@ -141,8 +140,27 @@ class ChatActivity : ComponentActivity() {
                             BackButton {
                                 finish()
                             }
-                        })
+                        },
 
+//                            actions = {
+//                                IconButton(
+//                                    onClick = {
+//                                        startActivity(
+//                                            Intent(
+//                                                this@ChatActivity,
+//                                                MessagesActivity::class.java
+//                                            )
+//                                        )
+//                                    },
+//                                    modifier = Modifier.padding(horizontal = 1.dp)
+//                                ) {
+//                                    Icon(
+//                                        imageVector = Icons.Default.Add,
+//                                        contentDescription = "Send"
+//                                    )
+//                                }
+//                            }
+                        )
                     }, bottomBar = {
                         BottomAppBar {
                             if (intent.getStringExtra("blockedText")!!.isNotEmpty()) {
@@ -174,7 +192,7 @@ class ChatActivity : ComponentActivity() {
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Add,
-                                        contentDescription = "Send"
+                                        contentDescription = "Media"
                                     )
                                 }
                                 OutlinedTextField(

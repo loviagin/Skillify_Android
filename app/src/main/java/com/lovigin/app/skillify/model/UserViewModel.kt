@@ -135,7 +135,7 @@ class UserViewModel {
                 "lastData" to listOf(
                     "android",
                     DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss").format(LocalDateTime.now()),
-                    "1 ver. 1.0.0"
+                    "3 ver. 1.0.3"
                 )
             )
         )

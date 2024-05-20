@@ -87,7 +87,7 @@ fun AccountScreen(navController: NavHostController, context: Context) {
     Box(Modifier.pullRefresh(state)) {
         Column(
             modifier = Modifier
-                .padding(top = 20.dp)
+                .padding(top = 30.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             if (!refreshing) {
