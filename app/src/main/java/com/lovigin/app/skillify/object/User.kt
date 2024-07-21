@@ -1,5 +1,6 @@
 package com.lovigin.app.skillify.`object`
 
+import com.lovigin.app.skillify.App.Companion.getDeviceInfo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -14,6 +15,7 @@ data class User(
     var bio: String = "",
     var language: String = "en",
     var blocked: Int = 0,
+    var block: String? = null,
     var nickname: String = "",
     var phone: String = "",
     var urlAvatar: String = "",
@@ -34,9 +36,13 @@ data class User(
     var lastData: List<String>? = listOf(
         "android",
         DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss").format(LocalDateTime.now()),
-        "3 ver. 1.0.3"
+        "7 ver. 1.0.7",
+        getDeviceInfo()
     ),
-    var tags: List<String>? = listOf("user")
+    var tags: List<String>? = listOf("user"),
+    var proData: MutableList<String> = ArrayList(),
+    var courses: MutableList<String>? = ArrayList(),
+    var privacyData: MutableList<String> = ArrayList()
 ) {
     companion object {
         private fun getBirthday(): Date {

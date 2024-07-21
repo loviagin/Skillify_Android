@@ -3,6 +3,7 @@ package com.lovigin.app.skillify.screen
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
@@ -54,6 +55,7 @@ import com.google.android.gms.common.api.ApiException
 import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.App.Companion.sharedPreferences
 import com.lovigin.app.skillify.R
+import com.lovigin.app.skillify.activity.EditProfileActivity
 import com.lovigin.app.skillify.ui.theme.BrandBlue
 import com.lovigin.app.skillify.ui.theme.BrandLightRed
 import com.lovigin.app.skillify.ui.theme.Gray40
@@ -154,7 +156,8 @@ fun AuthScreen(navHostController: NavHostController, context: Context) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
                 onClick = {
@@ -184,30 +187,34 @@ fun AuthScreen(navHostController: NavHostController, context: Context) {
                 )
             }
 
-            Button(
-                onClick = {
-                    if (email.isEmpty()) {
-                        errorEmail = context.getString(R.string.email_is_empty_txt)
-                        errorPass = ""
-                    } else if (!email.contains("@")) {
-                        errorEmail = context.getString(R.string.email_is_incorrect_txt)
-                        errorPass = ""
-                    } else if (password.isEmpty()) {
-                        errorEmail = ""
-                        errorPass = context.getString(R.string.password_is_empty_txt)
-                    } else if (password.length < 6) {
-                        errorEmail = ""
-                        errorPass =
-                            context.getString(R.string.password_is_less_than_6_characters_txt)
-                    } else {
-                        errorEmail = ""
-                        errorPass = ""
-                        signUpUser(email, password, context)
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = BrandLightRed)
-            ) {
-                Text(text = stringResource(R.string.registration_str))
+            if (viewModel.isRegistrationOn) {
+                Button(
+                    onClick = {
+                        if (email.isEmpty()) {
+                            errorEmail = context.getString(R.string.email_is_empty_txt)
+                            errorPass = ""
+                        } else if (!email.contains("@")) {
+                            errorEmail = context.getString(R.string.email_is_incorrect_txt)
+                            errorPass = ""
+                        } else if (password.isEmpty()) {
+                            errorEmail = ""
+                            errorPass = context.getString(R.string.password_is_empty_txt)
+                        } else if (password.length < 6) {
+                            errorEmail = ""
+                            errorPass =
+                                context.getString(R.string.password_is_less_than_6_characters_txt)
+                        } else {
+                            errorEmail = ""
+                            errorPass = ""
+                            signUpUser(email, password, context, navHostController)
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = BrandLightRed)
+                ) {
+                    Text(text = stringResource(R.string.registration_str))
+                }
+            } else {
+                Text(text = "Registration is disabled")
             }
         }
         Text(stringResource(R.string.or_use_another_methods_txt), Modifier.padding(top = 15.dp))
@@ -278,7 +285,8 @@ fun signInUser(
 fun signUpUser(
     email: String,
     password: String,
-    context: Context
+    context: Context,
+    navController: NavHostController
 ) {
     val viewModel = App.userViewModel
 
@@ -287,7 +295,10 @@ fun signUpUser(
             if (task.isSuccessful) {
                 Log.d(TAG, "signInWithEmail:success ${viewModel.auth.currentUser?.uid}")
                 sharedPreferences.edit().putString("userId", viewModel.auth.currentUser!!.uid).apply()
-                viewModel.registerUser(email, context = context)
+                viewModel.registerUser(email) {
+                    navController.navigate("account")
+                    context.startActivity(Intent(context, EditProfileActivity::class.java))
+                }
             } else {
                 Log.w(TAG, "signUpWithEmail:failure", task.exception)
                 Toast.makeText(

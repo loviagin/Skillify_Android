@@ -113,7 +113,7 @@ fun AccountScreen(navController: NavHostController, context: Context) {
                             ImageComponent(
                                 url = user!!.urlAvatar,
                                 contentDescription = "Avatar",
-                                size = 100.dp
+                                size = 100.dp,
                             )
                         } else {
                             Image(
@@ -387,7 +387,6 @@ private fun AccountComponent(
 fun BlurRectangle() {
     Box(
         modifier = Modifier
-//            .fillMaxWidth()
             .background(Color.Gray.copy(alpha = 0.5f))
             .clip(RoundedCornerShape(16.dp))
             .padding(10.dp)

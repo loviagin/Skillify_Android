@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
@@ -56,7 +57,7 @@ import com.lovigin.app.skillify.`object`.Skill
 
 class SelfSkillsActivity : ComponentActivity() {
 
-    var skills = mutableStateListOf<Skill>().apply {
+    private var skills = mutableStateListOf<Skill>().apply {
         Const.icons.keys.forEach { item ->
             if (App.userViewModel.user.value?.selfSkills?.find { it.name == item } != null) {
                 add(
@@ -123,6 +124,7 @@ class SelfSkillsActivity : ComponentActivity() {
                                 App.userViewModel.user.value?.learningSkills?.forEach {
                                     Chip(
                                         onClick = {
+                                            saveData(skills.filter { it.level != null })
                                             finish()
                                             startActivity(
                                                 Intent(
@@ -140,6 +142,7 @@ class SelfSkillsActivity : ComponentActivity() {
                                 }
                             } else {
                                 Chip(onClick = {
+                                    saveData(skills.filter { it.level != null })
                                     finish()
                                     startActivity(
                                         Intent(
@@ -296,7 +299,7 @@ class SelfSkillsActivity : ComponentActivity() {
                 selected = selectedOption == text,
                 onClick = { onOptionSelected(text) }
             )
-            Text(text = text)
+            Text(text = text, fontSize = 14.sp)
         }
     }
 }

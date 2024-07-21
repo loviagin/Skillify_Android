@@ -88,7 +88,7 @@ class SettingsActivity : ComponentActivity() {
                                 onDismissRequest = {},
                                 confirmButton = {
                                     Button(onClick = {
-                                        if (text == "") {
+                                        if (text == "07823145") {
                                             Toast.makeText(
                                                 this@SettingsActivity,
                                                 "You're now a PRO user",
@@ -100,6 +100,13 @@ class SettingsActivity : ComponentActivity() {
                                     }) {
                                         Text("Enter PRO")
                                     }
+                                },
+                                dismissButton = {
+                                    Button(onClick = {
+                                        counter.intValue = 0
+                                    }) {
+                                        Text("Cancel")
+                                        }
                                 },
                                 title = { Text("Enter password") },
                                 text = { TextField(value = text, onValueChange = { text = it }) },

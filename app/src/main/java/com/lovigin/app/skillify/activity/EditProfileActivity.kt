@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,16 +18,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -51,8 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,6 +56,7 @@ import com.google.firebase.storage.StorageReference
 import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.R
 import com.lovigin.app.skillify.activity.element.ImageComponent
+import com.lovigin.app.skillify.`object`.User
 import com.lovigin.app.skillify.ui.theme.SkillifyTheme
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
@@ -76,13 +70,10 @@ import java.util.UUID
 class EditProfileActivity : ComponentActivity() {
 
     private val viewModel = App.userViewModel
-    private val user = viewModel.user.value
-    private val items = listOf(
-        "-", getString(R.string.male_txt),
-        getString(R.string.female_txt), getString(R.string.other_txt)
-    )
+    private lateinit var user: User
+    private lateinit var items: List<String>  // Make this lateinit
     private val newValues = mutableMapOf<String, Any>()
-    private var imageUrl by mutableStateOf(user?.urlAvatar ?: "")
+    private var imageUrl by mutableStateOf("")
 
     private val storage = FirebaseStorage.getInstance()
     private val storageRef = storage.reference
@@ -107,6 +98,14 @@ class EditProfileActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        user = viewModel.user.value ?: return // Ensure user is initialized
+        imageUrl = user.urlAvatar
+
+        items = listOf(
+            "-", getString(R.string.male_txt),
+            getString(R.string.female_txt), getString(R.string.other_txt)
+        )
+
         // Инициализация лаунчеров
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -115,8 +114,10 @@ class EditProfileActivity : ComponentActivity() {
                     pickImageLauncher.launch("image/*")
                 } else {
                     // Разрешение отклонено, показываем сообщение
-                    Toast.makeText(this,
-                        getString(R.string.permission_denied_txt), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        getString(R.string.permission_denied_txt), Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
@@ -152,12 +153,12 @@ class EditProfileActivity : ComponentActivity() {
             }
 
         setContent {
-            var first_name by remember { mutableStateOf(user?.first_name ?: "") }
-            var last_name by remember { mutableStateOf(user?.last_name ?: "") }
-            var bio by remember { mutableStateOf(user?.bio ?: "") }
-            var nickname by remember { mutableStateOf(user?.nickname ?: "") }
-            var birthday by remember { mutableStateOf(user?.birthday ?: Date()) }
-            var sex by remember { mutableStateOf(user?.sex ?: "-") }
+            var first_name by remember { mutableStateOf(user.first_name) }
+            var last_name by remember { mutableStateOf(user.last_name) }
+            var bio by remember { mutableStateOf(user.bio) }
+            var nickname by remember { mutableStateOf(user.nickname) }
+            var birthday by remember { mutableStateOf(user.birthday) }
+            var sex by remember { mutableStateOf(user.sex) }
 
             var isBirthday by remember { mutableStateOf(false) }
             var expanded by remember { mutableStateOf(false) }
@@ -168,7 +169,7 @@ class EditProfileActivity : ComponentActivity() {
                         TopAppBar(
                             title = { Text(text = stringResource(R.string.edit_profile_str)) },
                             navigationIcon = {
-                                if (user!!.first_name.isNotEmpty()) {
+                                if (user.first_name.isNotEmpty()) {
                                     IconButton(onClick = { finish() }) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -211,7 +212,6 @@ class EditProfileActivity : ComponentActivity() {
                             onValueChange = {
                                 first_name = it.substring(0, minOf(15, it.length))
                                 newValues["first_name"] = it
-//                                viewModel.user.value!!.first_name = first_name
                             },
                             label = { Text(text = stringResource(R.string.first_name_str)) },
                             modifier = Modifier
@@ -225,7 +225,6 @@ class EditProfileActivity : ComponentActivity() {
                             onValueChange = {
                                 last_name = it.substring(0, minOf(15, it.length))
                                 newValues["last_name"] = it
-//                                viewModel.user.value!!.last_name = last_name
                             },
                             label = { Text(text = stringResource(R.string.last_name_str)) },
                             modifier = Modifier
@@ -240,7 +239,6 @@ class EditProfileActivity : ComponentActivity() {
                             onValueChange = {
                                 bio = it.substring(0, minOf(45, it.length))
                                 newValues["bio"] = it
-//                                viewModel.user.value!!.bio = bio
                             },
                             label = { Text(text = stringResource(R.string.short_description_str)) },
                             modifier = Modifier
@@ -255,7 +253,6 @@ class EditProfileActivity : ComponentActivity() {
                             onValueChange = {
                                 nickname = it.substring(0, minOf(15, it.length))
                                 newValues["nickname"] = it
-//                                viewModel.user.value!!.nickname = nickname
                             },
                             label = { Text(text = stringResource(R.string.nickname_str)) },
                             modifier = Modifier
@@ -340,7 +337,6 @@ class EditProfileActivity : ComponentActivity() {
                                         onClick = {
                                             sex = item
                                             newValues["sex"] = item
-//                                            viewModel.user.value!!.sex = sex
                                             expanded = false
                                         }, text = {
                                             Text(text = item)
@@ -392,7 +388,6 @@ class EditProfileActivity : ComponentActivity() {
                                             birthday =
                                                 dateState.selectedDateMillis?.let { Date(it) }!!
                                             newValues["birthday"] = birthday
-//                                            viewModel.user.value!!.birthday = birthday
                                             isBirthday = false
                                         },
                                         modifier = Modifier
@@ -406,7 +401,7 @@ class EditProfileActivity : ComponentActivity() {
                             }
                         }
 
-                        if (user!!.email.isNotEmpty()) {
+                        if (user.email.isNotEmpty()) {
                             TextField(
                                 value = user.email,
                                 enabled = false,
@@ -459,13 +454,14 @@ class EditProfileActivity : ComponentActivity() {
                                     getString(R.string.you_must_be_12_years_old_or_older_txt),
                                     Toast.LENGTH_SHORT
                                 ).show()
+                            } else {
+                                viewModel.updateData(
+                                    "users",
+                                    App.userViewModel.auth.currentUser!!.uid,
+                                    newValues
+                                )
+                                finish()
                             }
-                            viewModel.updateData(
-                                "users",
-                                App.userViewModel.auth.currentUser!!.uid,
-                                newValues
-                            )
-                            finish()
                         }, modifier = Modifier.padding(16.dp)) {
                             Text(text = "Save")
                         }
@@ -488,7 +484,7 @@ class EditProfileActivity : ComponentActivity() {
         val fileRef = storageRef.child("avatars/${fileUri.lastPathSegment}")
         fileRef.putFile(fileUri)
             .addOnSuccessListener { taskSnapshot ->
-                if (user!!.urlAvatar.isNotEmpty()) {
+                if (user.urlAvatar.isNotEmpty()) {
                     deleteFileFromFirebaseStorage(user.urlAvatar)
                 }
 

@@ -2,6 +2,7 @@ package com.lovigin.app.skillify.activity.element
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.Const
 import com.lovigin.app.skillify.R
 import com.lovigin.app.skillify.activity.ProfileActivity
@@ -53,12 +55,21 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
         modifier = modifier
             .padding(5.dp)
             .clickable {
-                context.startActivity(
-                    Intent(
-                        context,
-                        ProfileActivity::class.java
-                    ).putExtra("idUser", user.id)
-                )
+                if (App.userViewModel.auth.currentUser != null) {
+                    context.startActivity(
+                        Intent(
+                            context,
+                            ProfileActivity::class.java
+                        ).putExtra("idUser", user.id)
+                    )
+                } else {
+                    Toast
+                        .makeText(
+                            context,
+                            context.getString(R.string.please_login_first_txt), Toast.LENGTH_SHORT
+                        )
+                        .show()
+                }
             }
     ) {
         Column(
@@ -81,7 +92,6 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
                 url = user.urlAvatar,
                 contentDescription = "User avatar",
                 size = 100.dp,
-//                padding = 10.dp
             )
             val name = "${user.first_name} ${user.last_name}"
             Text(
@@ -136,7 +146,6 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
                     Text(
                         text = "+",
                         fontSize = 18.sp,
-//                        color = Color.White,
                         modifier = Modifier.padding(horizontal = 5.dp)
                     )
                 } else if (user.selfSkills.isEmpty()) {
@@ -146,7 +155,6 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
                         Text(
                             text = Const.icons[skill.name] ?: "",
                             fontSize = 18.sp,
-//                            color = Color.White,
                             modifier = Modifier.padding(horizontal = 5.dp)
                         )
                     }
@@ -160,7 +168,6 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
                 Icon(
                     painter = painterResource(id = R.drawable.fi_rr_bulb),
                     contentDescription = "Check",
-//                    tint = Color.White
                 )
                 Text(text = ": ", fontWeight = FontWeight.Bold)
                 if (user.learningSkills.size > 3) {
@@ -182,7 +189,6 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
                     Text(
                         text = "+",
                         fontSize = 18.sp,
-//                        color = Color.White,
                         modifier = Modifier.padding(horizontal = 5.dp)
                     )
                 } else if (user.learningSkills.isEmpty()) {
@@ -192,7 +198,6 @@ fun GridItem(user: User, modifier: Modifier = Modifier, context: Context) {
                         Text(
                             text = Const.icons[skill.name] ?: "",
                             fontSize = 18.sp,
-//                            color = Color.White,
                             modifier = Modifier.padding(horizontal = 5.dp)
                         )
                     }

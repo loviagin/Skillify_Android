@@ -12,11 +12,9 @@ import com.lovigin.app.skillify.`object`.Message
 import com.lovigin.app.skillify.worker.NotificationSender
 
 class MessagesViewModel {
-//    private val viewModel = App.userViewModel
-//    private val user = viewModel.user.value
-
     var messages = mutableStateListOf<Message>()
     var countUnreadMessages = mutableIntStateOf(0)
+    var loaded = false
 
     init {
         loadMessages()
@@ -49,8 +47,6 @@ class MessagesViewModel {
                                 }
                             }
                             messages.sortByDescending { it.time }
-//                            sharedPreferences.edit()
-//                                .putInt("countUnreadMessages", countUnreadMessages.intValue).apply()
                         }
                     }
             }

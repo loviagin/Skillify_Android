@@ -82,6 +82,7 @@ class MessagesActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         items(messagesViewModel.messages) {
+                            print("here`")
                             MessageItemView(it)
                         }
                     }
@@ -105,16 +106,20 @@ class MessagesActivity : ComponentActivity() {
             loadUser(userId) { user ->
                 imageUrl = user?.urlAvatar ?: ""
                 name = "${user?.first_name ?: ""} ${user?.last_name ?: ""}"
-                blocked = user?.blocked!! > 3
-                blockedText =
-                    if (user.blockedUsers.contains(App.userViewModel.user.value!!.id)) getString(
-                        R.string.you_was_blocked_txt,
-                        user.first_name
-                    )
-                    else if (App.userViewModel.user.value!!.blockedUsers.contains(user.id)) getString(
-                        R.string.you_blocked_str, user.first_name
-                    )
-                    else ""
+                if (user != null) {
+                    blocked = user.blocked > 3
+                    blockedText =
+                        if (user.blockedUsers.contains(App.userViewModel.user.value!!.id)) getString(
+                            R.string.you_was_blocked_txt,
+                            user.first_name
+                        )
+                        else if (App.userViewModel.user.value!!.blockedUsers.contains(user.id)) getString(
+                            R.string.you_blocked_str, user.first_name
+                        )
+                        else ""
+                } else {
+                    println("User not found")
+                }
             }
         }
 
@@ -196,6 +201,7 @@ class MessagesActivity : ComponentActivity() {
     }
 
     private fun loadUser(id: String, onUserLoaded: (User?) -> Unit) {
+        println("loadUser $id")
         Firebase.firestore
             .collection("users")
             .document(id)
@@ -203,8 +209,10 @@ class MessagesActivity : ComponentActivity() {
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot != null) {
                     val user = documentSnapshot.toObject(User::class.java)
+                    println("User loaded: $user")
                     onUserLoaded(user)
                 } else {
+                    println("User not found for ID: $id")
                     onUserLoaded(null)
                 }
             }

@@ -1,6 +1,5 @@
 package com.lovigin.app.skillify.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -11,22 +10,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Chip
-import androidx.compose.material.ChipDefaults
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.RadioButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -72,8 +65,7 @@ class LearningSkillsActivity : ComponentActivity() {
     }
 
     @OptIn(
-        ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
-        ExperimentalMaterialApi::class
+        ExperimentalMaterial3Api::class
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -251,7 +243,7 @@ class LearningSkillsActivity : ComponentActivity() {
                 selected = selectedOption == text,
                 onClick = { onOptionSelected(text) }
             )
-            Text(text = text)
+            Text(text = text, fontSize = 14.sp)
         }
     }
 }

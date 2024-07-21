@@ -13,7 +13,7 @@ fun HomeText (text: String) {
     Text(
         text = text,
         modifier = Modifier.padding(horizontal = 18.dp),
-        fontSize = 18.sp,
+        fontSize = 15.sp,
         color = Color.Black.copy(0.8f)
     )
 }

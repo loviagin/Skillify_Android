@@ -11,8 +11,18 @@ data class Chat(
     var time: Double = 0.0,
     var status: String? = "u", // u - unread, r - read
     var emoji: String? = null,
-    var replyTo: List<String>? = null
+    var replyTo: List<String>? = null,
+    var type: ChatType? = ChatType.TEXT
 ) {
+
+    enum class ChatType {
+        TEXT,
+        IMAGE,
+        VIDEO,
+        CALL,
+        FILE
+    }
+
     fun toMap(): Map<String, Any> {
         val result = mutableMapOf<String, Any>()
         result["id"] = id

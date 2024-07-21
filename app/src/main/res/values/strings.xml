@@ -82,7 +82,7 @@
     <string name="other_settings_str">Other settings</string>
     <string name="log_out_str">Log out</string>
     <string name="loading_txt">Loading...</string>
-    <string name="welcome_abroad_str">Welcome abroad!</string>
+    <string name="welcome_abroad_str">Welcome on board!</string>
     <string name="your_email_str">Your email</string>
     <string name="password_str">Password</string>
     <string name="email_is_empty_txt">Email is empty</string>
@@ -110,4 +110,8 @@
     <string name="enter_verification_code_str">Enter Verification Code</string>
     <string name="verify_code_str">Verify Code</string>
     <string name="max_skills_txt">At this time you can add only up to 5 skills</string>
+    <string name="photo_txt">Photo</string>
+    <string name="video_txt">Video</string>
+    <string name="file_txt">File</string>
+    <string name="please_login_first_txt">Please login first</string>
 </resources>

@@ -38,7 +38,7 @@ fun FollowUserView(context: Context, user: User) {
         ) {
             ImageComponent(
                 url = user.urlAvatar,
-                contentDescription = "Avatar",
+                contentDescription = "Avatar"
             )
 
             Column {

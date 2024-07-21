@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.lovigin.app.skillify.App
+import com.lovigin.app.skillify.App.Companion.getDeviceInfo
 import com.lovigin.app.skillify.App.Companion.messagesViewModel
 import com.lovigin.app.skillify.App.Companion.sharedPreferences
 import com.lovigin.app.skillify.activity.EditProfileActivity
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit
 class UserViewModel {
     private val USER_VIEWMODEL_TAG = "user_viewmodel_tag"
     var auth: FirebaseAuth = Firebase.auth
+    var isRegistrationOn = true
 
     var user = mutableStateOf<User?>(null)
 
@@ -43,6 +45,10 @@ class UserViewModel {
     private lateinit var context: Context // only with phone auth
     private lateinit var navHostController: NavHostController // only with phone auth
     private var phone = "" // only with phone auth
+
+    init {
+        checkRegistration()
+    }
 
     // Метод для отправки кода на телефон
     fun sendVerificationCode(
@@ -84,6 +90,15 @@ class UserViewModel {
             }
     }
 
+    private fun checkRegistration() {
+        Firebase.firestore.collection("admin").document("system").get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    isRegistrationOn = document.getBoolean("allowRegistration") ?: true
+                }
+            }
+    }
+
     // Коллбэки для обработки состояния верификации
     val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
@@ -106,17 +121,22 @@ class UserViewModel {
         val db = Firebase.firestore
         db.collection("users")
             .document(App.userViewModel.auth.currentUser!!.uid)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    user.value = document.toObject(User::class.java)!!
-                    Log.d(USER_VIEWMODEL_TAG, "DocumentSnapshot data")
-                    messagesViewModel.loadMessages()
+            .addSnapshotListener { document, error ->
+                if (error != null) {
+                    Log.w(USER_VIEWMODEL_TAG, "Listen failed.", error)
+                    return@addSnapshotListener
+                } else {
+                    if (document != null) {
+                        user.value = document.toObject(User::class.java)!!
+                        Log.d(USER_VIEWMODEL_TAG, "DocumentSnapshot data")
+                    }
+                    if (!messagesViewModel.loaded) {
+                        messagesViewModel.loadMessages()
+                        messagesViewModel.loaded = true
+                    }
+                    checkRegistration()
+                    function()
                 }
-                function()
-            }
-            .addOnFailureListener { exception ->
-                Log.d("TAG2456", "DocumentSnapshot error: $exception")
             }
         updateData(
             "users",
@@ -135,7 +155,8 @@ class UserViewModel {
                 "lastData" to listOf(
                     "android",
                     DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss").format(LocalDateTime.now()),
-                    "3 ver. 1.0.3"
+                    "7 ver. 1.0.7",
+                    getDeviceInfo()
                 )
             )
         )
@@ -170,10 +191,16 @@ class UserViewModel {
                 } else {
                     // User не найден
                     auth.currentUser!!.email?.let {
-                        registerUser(it, context = context)
+                        registerUser(it) {
+                            navHostController.navigate("account")
+                            context.startActivity(Intent(context, EditProfileActivity::class.java))
+                        }
                         Log.d("TAG", "email register")
                     } ?: run {
-                        registerUser(phone = phone, context = context)
+                        registerUser(phone = phone) {
+                            navHostController.navigate("account")
+                            context.startActivity(Intent(context, EditProfileActivity::class.java))
+                        }
                         Log.d("TAG", "phone register")
                     }
                 }
@@ -185,7 +212,7 @@ class UserViewModel {
             }
     }
 
-    fun registerUser(email: String = "", phone: String = "", context: Context) {
+    fun registerUser(email: String = "", phone: String = "", function: () -> Unit = {}) {
         user.value = User(
             id = auth.currentUser?.uid ?: UUID.randomUUID().toString(),
             email = email,
@@ -201,8 +228,7 @@ class UserViewModel {
         Firebase.firestore.collection("users")
             .document(auth.currentUser!!.uid)
             .set(user.value!!)
-        navHostController.navigate("account")
-        context.startActivity(Intent(context, EditProfileActivity::class.java))
+        function()
     }
 
     fun deleteData(collection: String, document: String, removeMap: Map<String, Any>) {

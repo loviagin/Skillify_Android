@@ -43,7 +43,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -51,12 +53,14 @@ import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.App.Companion.sharedPreferences
 import com.lovigin.app.skillify.Const.icons
 import com.lovigin.app.skillify.R
+import com.lovigin.app.skillify.activity.EditProfileActivity
 import com.lovigin.app.skillify.activity.HeaderApp
+import com.lovigin.app.skillify.activity.LearningSkillsActivity
 import com.lovigin.app.skillify.activity.ProfileActivity
+import com.lovigin.app.skillify.activity.SelfSkillsActivity
 import com.lovigin.app.skillify.activity.element.GridScreen
 import com.lovigin.app.skillify.activity.element.HomeText
 import com.lovigin.app.skillify.activity.element.ImageComponent
-import com.lovigin.app.skillify.model.UserViewModel
 import com.lovigin.app.skillify.`object`.User
 import com.lovigin.app.skillify.ui.theme.BrandBlue
 import com.lovigin.app.skillify.ui.theme.BrandLightRed
@@ -79,6 +83,14 @@ fun HomeScreen(
         loadUsers(users)
     }
 
+    if (App.userViewModel.user.value != null && App.userViewModel.user.value!!.nickname.isEmpty()) {
+        context.startActivity(Intent(context, EditProfileActivity::class.java))
+    } else if (App.userViewModel.user.value != null && App.userViewModel.user.value?.selfSkills?.isEmpty() == true) {
+        context.startActivity(Intent(context, SelfSkillsActivity::class.java))
+    } else if (App.userViewModel.user.value != null && App.userViewModel.user.value?.learningSkills?.isEmpty() == true) {
+        context.startActivity(Intent(context, LearningSkillsActivity::class.java))
+    }
+
     LazyColumn {
         item {
             HeaderApp(context = context, navController = navHostController)
@@ -87,8 +99,7 @@ fun HomeScreen(
             HomeText(text = stringResource(R.string.our_top_users_str))
             TopProUsersView(
                 urlAvatar = viewModel.user.value?.urlAvatar,
-                context = context,
-                viewModel
+                context = context
             )
 
             Row(
@@ -121,7 +132,7 @@ fun HomeScreen(
                             .background(if (selectedTab == 0) BrandBlue else Color.White)
                             .padding(5.dp)
                     ) {
-                        Text(text = stringResource(R.string.self_skill_txt))
+                        Text(text = stringResource(R.string.self_skill_txt), textAlign = TextAlign.Center, fontSize = 15.sp)
                     }
 
                     Tab(
@@ -143,7 +154,7 @@ fun HomeScreen(
                             .background(if (selectedTab == 1) BrandBlue else Color.White)
                             .padding(4.dp)
                     ) {
-                        Text(text = stringResource(R.string.learning_skills_str))
+                        Text(text = stringResource(R.string.learning_skills_str), textAlign = TextAlign.Center, fontSize = 15.sp)
                     }
                 }
             } // row with Searching text
@@ -202,6 +213,37 @@ fun HomeScreen(
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
+                                viewModel.user.value!!.learningSkills.forEach {
+                                    Chip(
+                                        onClick = {
+                                            if (chosenSkills.contains(it.name))
+                                                chosenSkills.remove(it.name)
+                                            else
+                                                chosenSkills.add(it.name)
+                                        },
+                                        colors = ChipDefaults.chipColors(
+                                            backgroundColor = if (chosenSkills.contains(it.name)) BrandBlue.copy(
+                                                0.5f
+                                            ) else Color.White
+                                        ),
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                            .padding(horizontal = 5.dp),
+                                        leadingIcon = {
+                                            icons[it.name]?.let { it1 ->
+                                                Text(
+                                                    text = it1,
+                                                    modifier = Modifier.padding(5.dp)
+                                                )
+                                            }
+                                        }
+                                    ) {
+                                        Text(
+                                            text = it.name,
+                                            modifier = Modifier.padding(vertical = 5.dp)
+                                        )
+                                    }
+                                }
                             }
                         } else {
                             OfferSetSkills(navHostController)
@@ -245,7 +287,8 @@ fun OfferSetSkills(navHostController: NavHostController) {
             text = stringResource(R.string.to_get_more_experience_with_our_app_txt),
             fontWeight = FontWeight.Bold
         )
-        Text(text = stringResource(R.string.please_set_your_skills_in_the_account_tab_txt))
+        Text(text = stringResource(R.string.please_set_your_skills_in_the_account_tab_txt),
+            textAlign = TextAlign.Center)
         Button(onClick = {
             navHostController.navigate("account")
         }) {
@@ -266,7 +309,8 @@ fun WelcomeHomeSkills(navHostController: NavHostController) {
             text = stringResource(R.string.to_get_more_experience_with_our_app_txt),
             fontWeight = FontWeight.Bold
         )
-        Text(text = stringResource(R.string.please_login_or_sign_up_in_skillify_txt))
+        Text(text = stringResource(R.string.please_login_or_sign_up_in_skillify_txt),
+            textAlign = TextAlign.Center)
         Button(onClick = {
             navHostController.navigate("account")
         }) {
@@ -276,7 +320,7 @@ fun WelcomeHomeSkills(navHostController: NavHostController) {
 }
 
 @Composable
-fun TopProUsersView(urlAvatar: String? = null, context: Context, viewModel: UserViewModel) {
+fun TopProUsersView(urlAvatar: String? = null, context: Context) {
     val proUsers = remember { mutableStateListOf<User>() }
 
     LaunchedEffect(true) {
@@ -345,7 +389,7 @@ fun ProUser(
         ImageComponent(
             url = urlAvatar,
             contentDescription = "User avatar",
-            size = 100.dp,
+            size = 95.dp,
             padding = 10.dp
         )
         if (isSelf) {
@@ -355,7 +399,7 @@ fun ProUser(
                 tint = BrandLightRed
             )
         }
-        Text(text = name.substring(0, minOf(name.length, 8)))
+        Text(text = name.substring(0, minOf(name.length, 8)), fontSize = 15.sp)
     }
 }
 

@@ -2,6 +2,7 @@ package com.lovigin.app.skillify.activity.element
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lovigin.app.skillify.App
 import com.lovigin.app.skillify.Const
 import com.lovigin.app.skillify.R
 import com.lovigin.app.skillify.activity.ProfileActivity
@@ -39,10 +41,18 @@ fun UserView(user: User, context: Context) {
             .padding(horizontal = 16.dp)
             .padding(vertical = 10.dp)
             .clickable {
-                context.startActivity(
-                    Intent(context, ProfileActivity::class.java)
-                        .putExtra("idUser", user.id)
-                )
+                if (App.userViewModel.auth.currentUser != null) {
+                    context.startActivity(
+                        Intent(context, ProfileActivity::class.java)
+                            .putExtra("idUser", user.id)
+                    )
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.please_login_first_txt),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
     ) {
         Row(
@@ -107,7 +117,6 @@ fun UserView(user: User, context: Context) {
                         Text(
                             text = "+",
                             fontSize = 18.sp,
-//                        color = Color.White,
                             modifier = Modifier.padding(horizontal = 5.dp)
                         )
                     } else if (user.selfSkills.isEmpty()) {
@@ -117,7 +126,6 @@ fun UserView(user: User, context: Context) {
                             Text(
                                 text = Const.icons[skill.name] ?: "",
                                 fontSize = 18.sp,
-//                            color = Color.White,
                                 modifier = Modifier.padding(horizontal = 5.dp)
                             )
                         }
@@ -153,7 +161,6 @@ fun UserView(user: User, context: Context) {
                         Text(
                             text = "+",
                             fontSize = 18.sp,
-//                        color = Color.White,
                             modifier = Modifier.padding(horizontal = 5.dp)
                         )
                     } else if (user.learningSkills.isEmpty()) {
@@ -163,7 +170,6 @@ fun UserView(user: User, context: Context) {
                             Text(
                                 text = Const.icons[skill.name] ?: "",
                                 fontSize = 18.sp,
-//                            color = Color.White,
                                 modifier = Modifier.padding(horizontal = 5.dp)
                             )
                         }

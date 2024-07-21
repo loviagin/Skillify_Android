@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -98,15 +100,22 @@ class ProfileActivity : ComponentActivity() {
                 }
 
                 var expanded by remember { mutableStateOf(false) }
-                val contacts = listOf(
-                    stringResource(R.string.share_profile_str),
-                    stringResource(R.string.add_to_favorites_str),
-                    if (viewModel.auth.currentUser != null && viewModel.user.value!!.blockedUsers.contains(
-                            id.value
+                val contacts =
+                    if ((user.value?.id ?: "") == (App.userViewModel.user.value?.id ?: "")) {
+                        listOf(
+                            stringResource(R.string.share_profile_str)
                         )
-                    ) stringResource(R.string.unblock_user_str)
-                    else stringResource(R.string.block_user_str)
-                )
+                    } else {
+                        listOf(
+                            stringResource(R.string.share_profile_str),
+                            stringResource(R.string.add_to_favorites_str),
+                            if (viewModel.auth.currentUser != null && viewModel.user.value!!.blockedUsers.contains(
+                                    id.value
+                                )
+                            ) stringResource(R.string.unblock_user_str)
+                            else stringResource(R.string.block_user_str)
+                        )
+                    }
 
                 Box(
                     modifier = Modifier
@@ -210,13 +219,34 @@ class ProfileActivity : ComponentActivity() {
                                 )
                             }
 
-                            user.value?.let {
-                                Text(
-                                    text = "${it.first_name} ${it.last_name}",
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold,
+                            user.value?.let { it ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(top = 10.dp)
-                                )
+                                ) {
+                                    Text(
+                                        text = "${it.first_name} ${it.last_name}",
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    if (user.value!!.tags?.contains("verified") == true) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.verify),
+                                            contentDescription = "Verified",
+                                            Modifier
+                                                .width(25.dp)
+                                                .padding(start = 5.dp),
+                                        )
+                                    } else if (user.value!!.tags?.contains("admin") == true) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.gold),
+                                            contentDescription = "Admin",
+                                            Modifier
+                                                .width(25.dp)
+                                                .padding(start = 5.dp),
+                                        )
+                                    }
+                                }
                                 Text(
                                     text = "@${it.nickname}",
                                 )
@@ -317,7 +347,10 @@ class ProfileActivity : ComponentActivity() {
                                                             "name",
                                                             "${user.value!!.first_name} ${user.value!!.last_name}"
                                                         )
-                                                        .putExtra("imageUrl", user.value!!.urlAvatar)
+                                                        .putExtra(
+                                                            "imageUrl",
+                                                            user.value!!.urlAvatar
+                                                        )
                                                         .putExtra("idMessage", messageId)
                                                         .putExtra("blockedText", blockedText)
                                                 )
@@ -500,7 +533,7 @@ class ProfileActivity : ComponentActivity() {
     private fun createMessage(onMessageCreated: (String) -> Unit) {
         Log.d("TAG", "creating message")
         val message = Message(
-            lastData = listOf("", "", ""),
+            lastData = mutableListOf("", "", ""),
             uids = listOf(App.userViewModel.user.value!!.id, id.value),
             messages = LinkedList(),
             time = System.currentTimeMillis() / 1000.0
@@ -523,7 +556,10 @@ class ProfileActivity : ComponentActivity() {
                 Firebase.firestore
                     .collection("users")
                     .document(id.value)
-                    .update("messages", FieldValue.arrayUnion(mapOf(App.userViewModel.user.value!!.id to message.id)))
+                    .update(
+                        "messages",
+                        FieldValue.arrayUnion(mapOf(App.userViewModel.user.value!!.id to message.id))
+                    )
 
                 onMessageCreated(message.id)
             }
